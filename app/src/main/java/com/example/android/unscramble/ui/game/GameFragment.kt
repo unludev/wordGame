@@ -20,6 +20,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.android.unscramble.R
@@ -45,26 +46,20 @@ class GameFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = GameFragmentBinding.inflate(inflater, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.game_fragment, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         with(binding) {
+            gameViewModel = viewModel
+            maxNoOfWords = MAX_NO_OF_WORDS
+            lifecycleOwner = viewLifecycleOwner
             submit.setOnClickListener { onSubmitWord() }
             skip.setOnClickListener { onSkipWord() }
-
-            viewModel.currentScrambledWord.observe(viewLifecycleOwner) {newWord ->
-                binding.textViewUnscrambledWord.text = newWord
-            }
-            viewModel.score.observe(viewLifecycleOwner){ newScore ->
-                binding.score.text = getString(R.string.score, newScore)
-            }
-            viewModel.currentWordCount.observe(viewLifecycleOwner) { newCount ->
-                binding.wordCount.text = getString(R.string.word_count, newCount, MAX_NO_OF_WORDS)
-            }
         }
 
 
@@ -123,12 +118,6 @@ class GameFragment : Fragment() {
 
     }
 
-    /*
-     * Displays the next scrambled word on screen.
-     */
-//    private fun updateNextWordOnScreen() {
-//        binding.textViewUnscrambledWord.text = viewModel.currentScrambledWord.value
-//    }
 
     //show dialog for final screen
     private fun showFinalScoreDialog() {
